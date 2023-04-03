@@ -245,8 +245,8 @@ class SyncWb implements ShouldQueue
                 // dd($row['rid']);
                 DB::table('wb_sales_reports')->upsert([
                     'realizationreport_id' => $row['realizationreport_id'],
-                    'date_from' => (new DateTime($row['date_from']))->format('Y-m-d H:i:s'),
-                    'date_to' => (new DateTime($row['date_to']))->format('Y-m-d H:i:s'),
+                    'date_from' => (new DateTime($row['date_from']))->format('Y-m-d'),
+                    'date_to' => (new DateTime($row['date_to']))->format('Y-m-d'),
                     'create_dt' => (new DateTime($row['create_dt']))->format('Y-m-d H:i:s'),
                     'suppliercontract_code' => $row['suppliercontract_code'],
                     'rrd_id' => $row['rrd_id'],
@@ -267,9 +267,9 @@ class SyncWb implements ShouldQueue
                     'commission_percent' => $row['commission_percent'],
                     'office_name' => $row['office_name'],
                     'supplier_oper_name' => $row['supplier_oper_name'],
-                    'order_dt' => (new DateTime($row['order_dt']))->format('Y-m-d H:i:s'),
-                    'sale_dt' => (new DateTime($row['sale_dt']))->format('Y-m-d H:i:s'),
-                    'rr_dt' => (new DateTime($row['rr_dt']))->format('Y-m-d H:i:s'),
+                    'order_dt' => (new DateTime($row['order_dt']))->format('Y-m-d'),
+                    'sale_dt' => (new DateTime($row['sale_dt']))->format('Y-m-d'),
+                    'rr_dt' => (new DateTime($row['rr_dt']))->format('Y-m-d'),
                     'shk_id' => $row['shk_id'],
                     'retail_price_withdisc_rub' => $row['retail_price_withdisc_rub'],
                     'delivery_amount' => $row['delivery_amount'],
