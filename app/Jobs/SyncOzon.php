@@ -148,101 +148,11 @@ class SyncOzon implements ShouldQueue
         }
         do {
 
-            foreach ($rows as $row) { //'order_id', 'posting_number', 'sku'
-
-
-                $id = null;
-                $name = null;
-                $warehouse_id = null;
-                $warehouse = null;
-                $tpl_provider_id = null;
-                $tpl_provider = null;
-                $cancel_reason_id = null;
-                $cancel_reason = null;
-                $cancellation_type = null;
-                $cancelled_after_ship = null;
-                $affect_cancellation_rating = null;
-                $cancellation_initiator = null;
-                $price = null;
-                $offer_id = null;
-                $name = null;
-                $sku = null;
-                $quantity = null;
-                $mandatory_mark = null;
-                $currency_code = null;
-                $region = null;
-                $city = null;
-                $delivery_type = null;
-                $is_premium = null;
-                $payment_type_group_name = null;
-                $warehouse_id = null;
-                $warehouse = null;
-                $tpl_provider_id = null;
-                $tpl_provider = null;
-                $delivery_date_begin = null;
-                $delivery_date_end = null;
-                $is_legal = null;
-                $commission_amount = null;
-                $commission_percent = null;
-                $payout = null;
-                $product_id = null;
-                $old_price = null;
-                $price = null;
-                $total_discount_value = null;
-                $total_discount_percent = null;
-                $actions = null;
-                $picking = null;
-                $quantity = null;
-                $client_price = null;
-
-                $currency_code = null;
-
-                $marketplace_service_item_fulfillment = null;
-                $marketplace_service_item_pickup = null;
-                $marketplace_service_item_dropoff_pvz = null;
-                $marketplace_service_item_dropoff_sc = null;
-                $marketplace_service_item_dropoff_ff = null;
-                $marketplace_service_item_direct_flow_trans = null;
-                $marketplace_service_item_return_flow_trans = null;
-                $marketplace_service_item_deliv_to_customer = null;
-                $marketplace_service_item_return_not_deliv_to_customer = null;
-                $marketplace_service_item_return_part_goods_customer = null;
-                $marketplace_service_item_return_after_deliv_to_customer = null;
-                $cluster_from = null;
-                $cluster_to = null;
-                $products_requiring_gtd = null;
-                $products_requiring_country = null;
-                $products_requiring_mandatory_mark = null;
-                $products_requiring_rnpt = null;
+            foreach ($rows as $row) {
                 $products_requiring_gtd = $row['requirements']['products_requiring_gtd'];
                 $products_requiring_country = $row['requirements']['products_requiring_country'];
                 $products_requiring_mandatory_mark = $row['requirements']['products_requiring_mandatory_mark'];
                 $products_requiring_rnpt = $row['requirements']['products_requiring_rnpt'];
-                $commission_amount = $row['financial_data']['products'][0]['commission_amount'];
-                $commission_percent = $row['financial_data']['products'][0]['commission_percent'];
-                $payout = $row['financial_data']['products'][0]['payout'];
-                $product_id = $row['financial_data']['products'][0]['product_id'];
-                $old_price = $row['financial_data']['products'][0]['old_price'];
-                $price = $row['financial_data']['products'][0]['price'];
-                $total_discount_value = $row['financial_data']['products'][0]['total_discount_value'];
-                $total_discount_percent = $row['financial_data']['products'][0]['total_discount_percent'];
-                //$actions = $row['financial_data']['products']['actions'];
-                $picking = $row['financial_data']['products'][0]['picking'];
-                $quantity = $row['financial_data']['products'][0]['quantity'];
-                $client_price = $row['financial_data']['products'][0]['client_price'];
-                $currency_code =  $row['financial_data']['products'][0]['currency_code'];
-
-                $marketplace_service_item_fulfillment = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_fulfillment'];
-                $marketplace_service_item_pickup = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_pickup'];
-                $marketplace_service_item_dropoff_pvz = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_dropoff_pvz'];
-                $marketplace_service_item_dropoff_sc = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_dropoff_sc'];
-                $marketplace_service_item_dropoff_ff = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_dropoff_ff'];
-                $marketplace_service_item_direct_flow_trans = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_direct_flow_trans'];
-                $marketplace_service_item_return_flow_trans = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_return_flow_trans'];
-                $marketplace_service_item_deliv_to_customer = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_deliv_to_customer'];
-                $marketplace_service_item_return_not_deliv_to_customer = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_return_not_deliv_to_customer'];
-                $marketplace_service_item_return_part_goods_customer = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_return_part_goods_customer'];
-                $marketplace_service_item_return_after_deliv_to_customer = $row['financial_data']['products'][0]['item_services']['marketplace_service_item_return_after_deliv_to_customer'];
                 $cluster_from = $row['financial_data']['cluster_from'];
                 $cluster_to = $row['financial_data']['cluster_to'];
                 $id = $row['delivery_method']['id'];
@@ -259,13 +169,6 @@ class SyncOzon implements ShouldQueue
                 $cancelled_after_ship = $row['cancellation']['cancelled_after_ship'];
                 $affect_cancellation_rating = $row['cancellation']['affect_cancellation_rating'];
                 $cancellation_initiator = $row['cancellation']['cancellation_initiator'];
-                $price = $row['products'][0]['price'];
-                $offer_id = $row['products'][0]['offer_id'];
-                $name = $row['products'][0]['name'];
-                $sku = $row['products'][0]['sku'];
-                $quantity = $row['products'][0]['quantity'];
-                $mandatory_mark = $row['products'][0]['mandatory_mark'];
-                $currency_code = $row['products'][0]['currency_code'];
                 $region = $row['analytics_data']['region'];
                 $city = $row['analytics_data']['city'];
                 $delivery_type = $row['analytics_data']['delivery_type'];
@@ -278,96 +181,122 @@ class SyncOzon implements ShouldQueue
                 $delivery_date_begin = $row['analytics_data']['delivery_date_begin'];
                 $delivery_date_end = $row['analytics_data']['delivery_date_end'];
                 $is_legal = $row['analytics_data']['is_legal'];
+                for ($i = 0; $i < count($row['products']); $i++) {
+                    $commission_amount = $row['financial_data']['products'][$i]['commission_amount'];
+                    $commission_percent = $row['financial_data']['products'][$i]['commission_percent'];
+                    $payout = $row['financial_data']['products'][$i]['payout'];
+                    $product_id = $row['financial_data']['products'][$i]['product_id'];
+                    $old_price = $row['financial_data']['products'][$i]['old_price'];
+                    $price = $row['financial_data']['products'][$i]['price'];
+                    $total_discount_value = $row['financial_data']['products'][$i]['total_discount_value'];
+                    $total_discount_percent = $row['financial_data']['products'][$i]['total_discount_percent'];
+                    $picking = $row['financial_data']['products'][$i]['picking'];
+                    $quantity = $row['financial_data']['products'][$i]['quantity'];
+                    $client_price = $row['financial_data']['products'][$i]['client_price'];
+                    $currency_code =  $row['financial_data']['products'][$i]['currency_code'];
+
+                    $marketplace_service_item_fulfillment = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_fulfillment'];
+                    $marketplace_service_item_pickup = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_pickup'];
+                    $marketplace_service_item_dropoff_pvz = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_dropoff_pvz'];
+                    $marketplace_service_item_dropoff_sc = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_dropoff_sc'];
+                    $marketplace_service_item_dropoff_ff = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_dropoff_ff'];
+                    $marketplace_service_item_direct_flow_trans = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_direct_flow_trans'];
+                    $marketplace_service_item_return_flow_trans = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_return_flow_trans'];
+                    $marketplace_service_item_deliv_to_customer = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_deliv_to_customer'];
+                    $marketplace_service_item_return_not_deliv_to_customer = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_return_not_deliv_to_customer'];
+                    $marketplace_service_item_return_part_goods_customer = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_return_part_goods_customer'];
+                    $marketplace_service_item_return_after_deliv_to_customer = $row['financial_data']['products'][$i]['item_services']['marketplace_service_item_return_after_deliv_to_customer'];
+                    $price = $row['products'][$i]['price'];
+                    $offer_id = $row['products'][$i]['offer_id'];
+                    $name = $row['products'][$i]['name'];
+                    $sku = $row['products'][$i]['sku'];
+                    $quantity = $row['products'][$i]['quantity'];
+                    $mandatory_mark = $row['products'][$i]['mandatory_mark'];
+                    $currency_code = $row['products'][$i]['currency_code'];
+                    DB::table('oz_posting_fbs')->upsert([
+                        "posting_number" => $row['posting_number'],
+                        "order_id" => $row['order_id'],
+                        "order_number" => $row['order_number'],
+                        "status" => $row['status'],
+                        "tracking_number" => $row['tracking_number'],
+                        "tpl_integration_type" => $row['tpl_integration_type'],
+                        "in_process_at" => (new DateTime($row['in_process_at']))->format('Y-m-d'),
+                        "shipment_date" => (new DateTime($row['shipment_date']))->format('Y-m-d'),
+                        "delivering_date" => (new DateTime($row['delivering_date']))->format('Y-m-d'),
+                        "customer" => $row['customer'],
+                        "addressee" => $row['addressee'],
+                        "barcodes" => $row['barcodes'],
+                        "is_express" => $row['is_express'],
+                        "parent_posting_number" => $row['parent_posting_number'],
+                        "available_actions" => json_encode($row['available_actions']),
+                        "multi_box_qty" => $row['multi_box_qty'],
+                        "is_multibox" => $row['is_multibox'],
+                        'products_requiring_gtd' => json_encode($products_requiring_gtd),
+                        'products_requiring_country' => json_encode($products_requiring_country),
+                        'products_requiring_mandatory_mark' => json_encode($products_requiring_mandatory_mark),
+                        'products_requiring_rnpt' => json_encode($products_requiring_rnpt),
+                        'commission_amount' => $commission_amount,
+                        'commission_percent' => $commission_percent,
+                        'payout' => $payout,
+                        'product_id' => $product_id,
+                        'old_price' => $old_price,
+                        'price' => $price,
+                        'total_discount_value' => $total_discount_value,
+                        'total_discount_percent' => $total_discount_percent,
+                        'actions' => json_encode(null),
+                        'picking' => json_encode($picking),
+                        'quantity' => $quantity,
+                        'client_price' => $client_price,
+                        'currency_code' =>  $currency_code,
+
+                        'marketplace_service_item_fulfillment' => $marketplace_service_item_fulfillment,
+                        'marketplace_service_item_pickup' => $marketplace_service_item_pickup,
+                        'marketplace_service_item_dropoff_pvz' => $marketplace_service_item_dropoff_pvz,
+                        'marketplace_service_item_dropoff_sc' => $marketplace_service_item_dropoff_sc,
+                        'marketplace_service_item_dropoff_ff' => $marketplace_service_item_dropoff_ff,
+                        'marketplace_service_item_direct_flow_trans' => $marketplace_service_item_direct_flow_trans,
+                        'marketplace_service_item_return_flow_trans' => $marketplace_service_item_return_flow_trans,
+                        'marketplace_service_item_deliv_to_customer' => $marketplace_service_item_deliv_to_customer,
+                        'marketplace_service_item_return_not_deliv_to_customer' => $marketplace_service_item_return_not_deliv_to_customer,
+                        'marketplace_service_item_return_part_goods_customer' => $marketplace_service_item_return_part_goods_customer,
+                        'marketplace_service_item_return_after_deliv_to_customer' => $marketplace_service_item_return_after_deliv_to_customer,
+                        'cluster_from' => $cluster_from,
+                        'cluster_to' => $cluster_to,
+                        'delivery_method_id' => $id,
+                        'name' => $name,
+                        'warehouse_id' => $warehouse_id,
+                        'warehouse' => $warehouse,
+                        'tpl_provider_id' => $tpl_provider_id,
+                        'tpl_provider' => $tpl_provider,
 
 
-                // if (!DB::table('oz_posting_fbs')->where([
-                //     'order_id' => $row['order_id'], 'posting_number' => $row['posting_number'], 'sku' => $sku
-                // ])->exists()) {
-                DB::table('oz_posting_fbs')->upsert([
-                    "posting_number" => $row['posting_number'],
-                    "order_id" => $row['order_id'],
-                    "order_number" => $row['order_number'],
-                    "status" => $row['status'],
-                    "tracking_number" => $row['tracking_number'],
-                    "tpl_integration_type" => $row['tpl_integration_type'],
-                    "in_process_at" => (new DateTime($row['in_process_at']))->format('Y-m-d'),
-                    "shipment_date" => (new DateTime($row['shipment_date']))->format('Y-m-d'),
-                    "delivering_date" => (new DateTime($row['delivering_date']))->format('Y-m-d'),
-                    "customer" => $row['customer'],
-                    "addressee" => $row['addressee'],
-                    "barcodes" => $row['barcodes'],
-                    "is_express" => $row['is_express'],
-                    "parent_posting_number" => $row['parent_posting_number'],
-                    "available_actions" => json_encode($row['available_actions']),
-                    "multi_box_qty" => $row['multi_box_qty'],
-                    "is_multibox" => $row['is_multibox'],
-                    //"substatus" => $row['substatus'],
-                    'products_requiring_gtd' => json_encode($products_requiring_gtd),
-                    'products_requiring_country' => json_encode($products_requiring_country),
-                    'products_requiring_mandatory_mark' => json_encode($products_requiring_mandatory_mark),
-                    'products_requiring_rnpt' => json_encode($products_requiring_rnpt),
-                    'commission_amount' => $commission_amount,
-                    'commission_percent' => $commission_percent,
-                    'payout' => $payout,
-                    'product_id' => $product_id,
-                    'old_price' => $old_price,
-                    'price' => $price,
-                    'total_discount_value' => $total_discount_value,
-                    'total_discount_percent' => $total_discount_percent,
-                    'actions' => json_encode(null),
-                    'picking' => json_encode($picking),
-                    'quantity' => $quantity,
-                    'client_price' => $client_price,
-                    'currency_code' =>  $currency_code,
-
-                    'marketplace_service_item_fulfillment' => $marketplace_service_item_fulfillment,
-                    'marketplace_service_item_pickup' => $marketplace_service_item_pickup,
-                    'marketplace_service_item_dropoff_pvz' => $marketplace_service_item_dropoff_pvz,
-                    'marketplace_service_item_dropoff_sc' => $marketplace_service_item_dropoff_sc,
-                    'marketplace_service_item_dropoff_ff' => $marketplace_service_item_dropoff_ff,
-                    'marketplace_service_item_direct_flow_trans' => $marketplace_service_item_direct_flow_trans,
-                    'marketplace_service_item_return_flow_trans' => $marketplace_service_item_return_flow_trans,
-                    'marketplace_service_item_deliv_to_customer' => $marketplace_service_item_deliv_to_customer,
-                    'marketplace_service_item_return_not_deliv_to_customer' => $marketplace_service_item_return_not_deliv_to_customer,
-                    'marketplace_service_item_return_part_goods_customer' => $marketplace_service_item_return_part_goods_customer,
-                    'marketplace_service_item_return_after_deliv_to_customer' => $marketplace_service_item_return_after_deliv_to_customer,
-                    'cluster_from' => $cluster_from,
-                    'cluster_to' => $cluster_to,
-                    'delivery_method_id' => $id,
-                    'name' => $name,
-                    'warehouse_id' => $warehouse_id,
-                    'warehouse' => $warehouse,
-                    'tpl_provider_id' => $tpl_provider_id,
-                    'tpl_provider' => $tpl_provider,
-
-
-                    'cancel_reason_id' => $cancel_reason_id,
-                    'cancel_reason' => $cancel_reason,
-                    'cancellation_type' => $cancellation_type,
-                    'cancelled_after_ship' => $cancelled_after_ship,
-                    'affect_cancellation_rating' => $affect_cancellation_rating,
-                    'cancellation_initiator' => $cancellation_initiator,
-                    'price' => $price,
-                    'offer_id' => $offer_id,
-                    'name' => $name,
-                    'sku' => $sku,
-                    'quantity' => $quantity,
-                    'mandatory_mark' => json_encode($mandatory_mark),
-                    'currency_code' => $currency_code,
-                    'region' => $region,
-                    'city' => $city,
-                    'delivery_type' => $delivery_type,
-                    'is_premium' => $is_premium,
-                    'payment_type_group_name' => $payment_type_group_name,
-                    'warehouse_id' => $warehouse_id,
-                    'warehouse' => $warehouse,
-                    'tpl_provider_id' => $tpl_provider_id,
-                    'tpl_provider' => $tpl_provider,
-                    'delivery_date_begin' => (new DateTime($delivery_date_begin))->format('Y-m-d'),
-                    'delivery_date_end' => (new DateTime($delivery_date_end))->format('Y-m-d'),
-                    'is_legal' => $is_legal,
-                ], ['order_id', 'posting_number', 'sku']);
-                // }
+                        'cancel_reason_id' => $cancel_reason_id,
+                        'cancel_reason' => $cancel_reason,
+                        'cancellation_type' => $cancellation_type,
+                        'cancelled_after_ship' => $cancelled_after_ship,
+                        'affect_cancellation_rating' => $affect_cancellation_rating,
+                        'cancellation_initiator' => $cancellation_initiator,
+                        'price' => $price,
+                        'offer_id' => $offer_id,
+                        'name' => $name,
+                        'sku' => $sku,
+                        'quantity' => $quantity,
+                        'mandatory_mark' => json_encode($mandatory_mark),
+                        'currency_code' => $currency_code,
+                        'region' => $region,
+                        'city' => $city,
+                        'delivery_type' => $delivery_type,
+                        'is_premium' => $is_premium,
+                        'payment_type_group_name' => $payment_type_group_name,
+                        'warehouse_id' => $warehouse_id,
+                        'warehouse' => $warehouse,
+                        'tpl_provider_id' => $tpl_provider_id,
+                        'tpl_provider' => $tpl_provider,
+                        'delivery_date_begin' => (new DateTime($delivery_date_begin))->format('Y-m-d'),
+                        'delivery_date_end' => (new DateTime($delivery_date_end))->format('Y-m-d'),
+                        'is_legal' => $is_legal,
+                    ], ['order_id', 'posting_number', 'sku']);
+                }
             }
             $offset += 5;
             $response = Http::withHeaders([
@@ -397,6 +326,8 @@ class SyncOzon implements ShouldQueue
             $rows = $data['result']['postings'];
         } while ((!empty($rows)));
     }
+
+
     protected function fetchOzonPostingFbo(DateTime $dateForm)
     {
         $offset = 0;
