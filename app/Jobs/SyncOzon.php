@@ -220,9 +220,9 @@ class SyncOzon implements ShouldQueue
                         "status" => $row['status'],
                         "tracking_number" => $row['tracking_number'],
                         "tpl_integration_type" => $row['tpl_integration_type'],
-                        "in_process_at" => (new DateTime($row['in_process_at']))->format('Y-m-d'),
-                        "shipment_date" => (new DateTime($row['shipment_date']))->format('Y-m-d'),
-                        "delivering_date" => (new DateTime($row['delivering_date']))->format('Y-m-d'),
+                        "in_process_at" => (new DateTime($row['in_process_at']))->format('Y-m-d H:i:s'),
+                        "shipment_date" => (new DateTime($row['shipment_date']))->format('Y-m-d H:i:s'),
+                        "delivering_date" => (new DateTime($row['delivering_date']))->format('Y-m-d H:i:s'),
                         "customer" => $row['customer'],
                         "addressee" => $row['addressee'],
                         "barcodes" => $row['barcodes'],
@@ -292,8 +292,8 @@ class SyncOzon implements ShouldQueue
                         'warehouse' => $warehouse,
                         'tpl_provider_id' => $tpl_provider_id,
                         'tpl_provider' => $tpl_provider,
-                        'delivery_date_begin' => (new DateTime($delivery_date_begin))->format('Y-m-d'),
-                        'delivery_date_end' => (new DateTime($delivery_date_end))->format('Y-m-d'),
+                        'delivery_date_begin' => (new DateTime($delivery_date_begin))->format('Y-m-d H:i:s'),
+                        'delivery_date_end' => (new DateTime($delivery_date_end))->format('Y-m-d H:i:s'),
                         'is_legal' => $is_legal,
                     ], ['order_id', 'posting_number', 'sku']);
                 }
