@@ -117,31 +117,31 @@ class SyncWb implements ShouldQueue
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/incomes', ['dateFrom' => $dateForm->format('Y-m-d')]);
         //dd($response->json());
+        $dataForSave = [];
         foreach ($response->json() as $row) {
+            $dataForSave[] = [
 
-            // if (!DB::table('wb_incomes')->where([
-            //     'income_id' => $row['incomeId'],
-            //     'barcode' => $row['barcode']
-            // ])->exists()) {
+                'income_id' => $row['incomeId'],
+                'number' => $row['number'],
+                'date' => $row['date'],
+                'last_change_date' => $row['lastChangeDate'],
+                'supplier_article' => $row['supplierArticle'],
+                'tech_size' => $row['techSize'],
+                'barcode' => $row['barcode'],
+                'quantity' => $row['quantity'],
+                'total_price' => $row['totalPrice'],
+                'date_close' => $row['dateClose'],
+                'warehouse_name' => $row['warehouseName'],
+                'nm_id' => $row['nmId'],
+                'status' => $row['status'],
+            ];
+        }
+        $dataForSaveChunks = array_chunk($dataForSave, 1000);
+        foreach ($dataForSaveChunks as $chunk) {
             DB::table('wb_incomes')->upsert(
-                [
-                    'income_id' => $row['incomeId'],
-                    'number' => $row['number'],
-                    'date' => $row['date'],
-                    'last_change_date' => $row['lastChangeDate'],
-                    'supplier_article' => $row['supplierArticle'],
-                    'tech_size' => $row['techSize'],
-                    'barcode' => $row['barcode'],
-                    'quantity' => $row['quantity'],
-                    'total_price' => $row['totalPrice'],
-                    'date_close' => $row['dateClose'],
-                    'warehouse_name' => $row['warehouseName'],
-                    'nm_id' => $row['nmId'],
-                    'status' => $row['status'],
-                ],
+                $chunk,
                 ['income_id', 'barcode']
             );
-            // }
         }
     }
 
@@ -152,9 +152,10 @@ class SyncWb implements ShouldQueue
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/orders', ['dateFrom' => $dateForm->format('Y-m-d'), 'flag' => 1]);
         //dd($response->json());
+        $dataForSave = [];
         foreach ($response->json() as $row) {
-            // if (!DB::table('wb_orders')->where('odid', $row['odid'])->exists()) {
-            DB::table('wb_orders')->upsert([
+
+            $dataForSave[] =     [
                 'g_number' => $row['gNumber'],
                 'date' => $row['date'],
                 'last_change_date' => $row['lastChangeDate'],
@@ -175,8 +176,14 @@ class SyncWb implements ShouldQueue
                 'cancel_dt' => $row['cancel_dt'],
                 'sticker' => $row['sticker'],
                 'srid' => $row['srid'],
-            ], ['odid']);
-            // }
+            ];
+        }
+        $dataForSaveChunks = array_chunk($dataForSave, 1000);
+        foreach ($dataForSaveChunks as $chunk) {
+            DB::table('wb_orders')->upsert(
+                $chunk,
+                ['odid']
+            );
         }
     }
     protected function fetchSales(DateTime $dateForm)
@@ -184,10 +191,9 @@ class SyncWb implements ShouldQueue
         $response = Http::withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $dateForm->format('Y-m-d')]);
-        //dd($response->json());
+        $dataForSave = [];
         foreach ($response->json() as $row) {
-            // if (!DB::table('wb_sales')->where('sale_id', $row['saleID'])->exists()) {
-            DB::table('wb_sales')->upsert([
+            $dataForSave[] = [
                 'g_number' => $row['gNumber'],
                 'date' => $row['date'],
                 'last_change_date' => $row['lastChangeDate'],
@@ -220,8 +226,14 @@ class SyncWb implements ShouldQueue
                 'is_storno' => $row['IsStorno'],
                 'sticker' => $row['sticker'],
                 'srid' => $row['srid'],
-            ], ['sale_id']);
-            // }
+            ];
+        }
+        $dataForSaveChunks = array_chunk($dataForSave, 1000);
+        foreach ($dataForSaveChunks as $chunk) {
+            DB::table('wb_sales')->upsert(
+                $chunk,
+                ['sale_id']
+            );
         }
     }
     protected function fetchSalesReports(DateTime $dateForm)
@@ -229,7 +241,7 @@ class SyncWb implements ShouldQueue
         $response = Http::withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
-            'dateFrom' => $dateForm->format('Y-m-d'), 'limit' => 10000,
+            'dateFrom' => $dateForm->format('Y-m-d'), 'limit' => 1000,
             'dateTo' => $dateForm->add(new DateInterval('P2D'))->format('Y-m-d'),
             'rrdid' => 0
         ]);
@@ -239,11 +251,10 @@ class SyncWb implements ShouldQueue
             return;
         }
         do {
-
+            $dataForSave = [];
             foreach ($rows as $row) {
-                // if (!DB::table('wb_sales_reports')->where('rrd_id', $row['rrd_id'])->exists()) {
-                // dd($row['rid']);
-                DB::table('wb_sales_reports')->upsert([
+                $dataForSave[] = [
+
                     'realizationreport_id' => $row['realizationreport_id'],
                     'date_from' => (new DateTime($row['date_from']))->format('Y-m-d'),
                     'date_to' => (new DateTime($row['date_to']))->format('Y-m-d'),
@@ -303,14 +314,17 @@ class SyncWb implements ShouldQueue
                     'penalty' => $row['penalty'],
                     'additional_payment' => $row['additional_payment'],
                     'srid' => $row['srid'],
-                ], ['rrd_id']);
-                // }
+                ];
+            }
+            $dataForSaveChunks = array_chunk($dataForSave, 1000);
+            foreach ($dataForSaveChunks as $chunk) {
+                DB::table('wb_sales_reports')->upsert($chunk, ['rrd_id']);
             }
             $response = Http::withHeaders([
                 'Authorization' => config('services.wb.statistic_key')
             ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
                 'dateFrom' => $dateForm->format('Y-m-d'),
-                'limit' => 10000, 'dateTo' => $dateForm->add(new DateInterval('P2D'))->format('Y-m-d'),
+                'limit' => 1000, 'dateTo' => $dateForm->add(new DateInterval('P2D'))->format('Y-m-d'),
                 'rrdid' => $row['rrd_id']
             ]);
             //dd($response->json());
