@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\OzInfoStock;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -79,7 +80,7 @@ class SyncOzon implements ShouldQueue
                         $fbsreserved = $stocks['reserved'];
                     }
                 }
-                DB::table('oz_info_stocks')->insert([
+                OzInfoStock::create([
                     'date' => $today,
                     'product_id' => $row['product_id'],
                     'offer_id' => $row['offer_id'],
