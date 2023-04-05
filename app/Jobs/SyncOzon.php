@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\OzInfoStock;
+use App\Models\OzPostingFbs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,12 +22,16 @@ class SyncOzon implements ShouldQueue
 
     public $timeout = 2 * 60;
 
+    protected DateTime $from;
+    protected DateTime $to;
+
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct(DateTime $from, DateTime $to)
     {
-        //
+        $this->from = $from;
+        $this->to = $to;
     }
 
     /**
@@ -34,11 +39,9 @@ class SyncOzon implements ShouldQueue
      */
     public function handle(): void
     {
-        $date = new DateTime('-4 day');
-
         $this->fetchOzon();
-        $this->fetchOzonPosting($date);
-        $this->fetchOzonPostingFbo($date);
+        $this->fetchOzonPosting();
+        // $this->fetchOzonPostingFbo();
     }
     protected function fetchOzon()
     {
@@ -113,7 +116,7 @@ class SyncOzon implements ShouldQueue
         } while ((!empty($rows)));
         //dd($response->json());
     }
-    protected function fetchOzonPosting(DateTime $dateForm)
+    protected function fetchOzonPosting()
     {
         $offset = 0;
         $response = Http::withHeaders([
@@ -124,9 +127,9 @@ class SyncOzon implements ShouldQueue
         ])->post('https://api-seller.ozon.ru/v3/posting/fbs/list', [
             "dir" => "ASC",
             "filter" => [
-                "since" => $dateForm->sub(new DateInterval('P1D'))->format('c'),
+                "since" => $this->from->format('c'),
                 "status" =>  "",
-                "to" => $dateForm->add(new DateInterval('P1D'))->format('c'),
+                "to" => $this->to->format('c'),
             ],
 
             "limit" => 100,
@@ -241,7 +244,7 @@ class SyncOzon implements ShouldQueue
             }
             $dataForSaveChunks = array_chunk($dataForSave, 1000);
             foreach ($dataForSaveChunks as $chunk) {
-                DB::table('oz_posting_fbs')->upsert($chunk, ['order_id', 'posting_number', 'sku']);
+                OzPostingFbs::upsert($chunk, ['order_id', 'posting_number', 'sku']);
             }
             $offset += 100;
             $response = Http::withHeaders([
@@ -252,9 +255,9 @@ class SyncOzon implements ShouldQueue
             ])->post('https://api-seller.ozon.ru/v3/posting/fbs/list', [
                 "dir" => "ASC",
                 "filter" => [
-                    "since" => $dateForm->sub(new DateInterval('P1D'))->format('c'),
+                    "since" => $this->from->format('c'),
                     "status" =>  "",
-                    "to" => $dateForm->add(new DateInterval('P1D'))->format('c'),
+                    "to" => $this->to->format('c'),
                 ],
 
                 "limit" => 100,
@@ -273,36 +276,36 @@ class SyncOzon implements ShouldQueue
     }
 
 
-    protected function fetchOzonPostingFbo(DateTime $dateForm)
-    {
-        $offset = 0;
-        $response = Http::withHeaders([
-            'Host' => 'api-seller.ozon.ru',
-            'Client-Id' => config('services.ozon.client_id'),
-            'Api-Key' => config('services.ozon.api_key'),
-            'Content-Type' => 'application/json'
-        ])->post('https://api-seller.ozon.ru/v2/posting/fbo/list', [
-            "dir" => "ASC",
-            "filter" => [
-                "since" => $dateForm->sub(new DateInterval('P1D'))->format('c'),
-                "status" =>  "",
-                "to" => $dateForm->add(new DateInterval('P1D'))->format('c'),
-            ],
+    // protected function fetchOzonPostingFbo()
+    // {
+    //     $offset = 0;
+    //     $response = Http::withHeaders([
+    //         'Host' => 'api-seller.ozon.ru',
+    //         'Client-Id' => config('services.ozon.client_id'),
+    //         'Api-Key' => config('services.ozon.api_key'),
+    //         'Content-Type' => 'application/json'
+    //     ])->post('https://api-seller.ozon.ru/v2/posting/fbo/list', [
+    //         "dir" => "ASC",
+    //         "filter" => [
+    //             "since" => $dateForm->sub(new DateInterval('P1D'))->format('c'),
+    //             "status" =>  "",
+    //             "to" => $dateForm->add(new DateInterval('P1D'))->format('c'),
+    //         ],
 
-            "limit" => 5,
-            "offset" => 0,
-            "translit" => true,
-            "with" => [
+    //         "limit" => 5,
+    //         "offset" => 0,
+    //         "translit" => true,
+    //         "with" => [
 
-                "analytics_data" => true,
-                "financial_data" => true
+    //             "analytics_data" => true,
+    //             "financial_data" => true
 
-            ]
+    //         ]
 
 
 
-        ]);
-        $data = $response->json();
-        // dd($data);
-    }
+    //     ]);
+    //     $data = $response->json();
+    //     // dd($data);
+    // }
 }

@@ -2,6 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Models\WbIncome;
+use App\Models\WbOrder;
+use App\Models\WbPrice;
+use App\Models\WbSale;
+use App\Models\WbSalesReports;
+use App\Models\WbStock;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,7 +58,7 @@ class SyncWb implements ShouldQueue
             // if (!DB::table('wb_prices')->where('nm_id', $row['nmId'])->exists()) {
 
 
-            DB::table('wb_prices')->insert([
+            WbPrice::create([
                 'nm_id' => $row['nmId'],
                 'date' => $date,
                 'price' => $row['price'],
@@ -84,7 +90,7 @@ class SyncWb implements ShouldQueue
             //     'barcode' => $row['barcode'], 'warehouse_name' => $row['warehouseName']
             // ])->exists())
 
-            DB::table('wb_stocks')->insert([
+            WbStock::create([
                 'date' => $date,
                 'last_change_date' => $row['lastChangeDate'],
                 'supplier_article' => $row['supplierArticle'],
@@ -138,7 +144,7 @@ class SyncWb implements ShouldQueue
         }
         $dataForSaveChunks = array_chunk($dataForSave, 1000);
         foreach ($dataForSaveChunks as $chunk) {
-            DB::table('wb_incomes')->upsert(
+            WbIncome::upsert(
                 $chunk,
                 ['income_id', 'barcode']
             );
@@ -180,7 +186,7 @@ class SyncWb implements ShouldQueue
         }
         $dataForSaveChunks = array_chunk($dataForSave, 1000);
         foreach ($dataForSaveChunks as $chunk) {
-            DB::table('wb_orders')->upsert(
+            WbOrder::upsert(
                 $chunk,
                 ['odid']
             );
@@ -230,7 +236,7 @@ class SyncWb implements ShouldQueue
         }
         $dataForSaveChunks = array_chunk($dataForSave, 1000);
         foreach ($dataForSaveChunks as $chunk) {
-            DB::table('wb_sales')->upsert(
+            WbSale::upsert(
                 $chunk,
                 ['sale_id']
             );
@@ -318,7 +324,7 @@ class SyncWb implements ShouldQueue
             }
             $dataForSaveChunks = array_chunk($dataForSave, 1000);
             foreach ($dataForSaveChunks as $chunk) {
-                DB::table('wb_sales_reports')->upsert($chunk, ['rrd_id']);
+                WbSalesReports::upsert($chunk, ['rrd_id']);
             }
             $response = Http::withHeaders([
                 'Authorization' => config('services.wb.statistic_key')
