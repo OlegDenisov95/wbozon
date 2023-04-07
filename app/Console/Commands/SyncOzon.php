@@ -30,8 +30,8 @@ class SyncOzon extends Command
         $from = $this->argument('from');
         $to = $this->argument('to');
 
-        $from = empty($from) ? new DateTime('-5 day') : new DateTime($from);
-        $to = empty($to) ? new DateTime('-3 day') : new DateTime($to);
+        $from = empty($from) ? new DateTime('-1 day') : new DateTime($from);
+        $to = empty($to) ? new DateTime('-1 day') : new DateTime($to);
 
         JobsSyncOzon::dispatchSync($from, $to);
     }

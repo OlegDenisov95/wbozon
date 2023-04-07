@@ -26,12 +26,15 @@ class SyncWb implements ShouldQueue
 
     public $timeout = 2 * 60;
 
+    protected DateTime $from;
+    protected DateTime $to;
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct(DateTime $from, DateTime $to)
     {
-        //
+        $this->from = $from;
+        $this->to = $to;
     }
 
     /**
@@ -39,7 +42,7 @@ class SyncWb implements ShouldQueue
      */
     public function handle(): void
     {
-        $date = new DateTime('-4 day');
+        $date = new DateTime('-1 day');
         $this->fetchPrices();
         $this->fetchStocks($date);
         $this->fetchIncomes($date);
@@ -121,7 +124,7 @@ class SyncWb implements ShouldQueue
     {
         $response =  Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
-        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/incomes', ['dateFrom' => $dateForm->format('Y-m-d')]);
+        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/incomes', ['dateFrom' => $this->from->format('Y-m-d')]);
         //dd($response->json());
         $dataForSave = [];
         foreach ($response->json() as $row) {
@@ -156,7 +159,7 @@ class SyncWb implements ShouldQueue
     {
         $response =  Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
-        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/orders', ['dateFrom' => $dateForm->format('Y-m-d'), 'flag' => 1]);
+        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/orders', ['dateFrom' => $this->from->format('Y-m-d'), 'flag' => 1]);
         //dd($response->json());
         $dataForSave = [];
         foreach ($response->json() as $row) {
@@ -196,7 +199,7 @@ class SyncWb implements ShouldQueue
     {
         $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
-        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $dateForm->format('Y-m-d')]);
+        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $this->from->format('Y-m-d')]);
         $dataForSave = [];
         foreach ($response->json() as $row) {
             $dataForSave[] = [
@@ -247,8 +250,8 @@ class SyncWb implements ShouldQueue
         $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
-            'dateFrom' => $dateForm->format('Y-m-d'), 'limit' => 1000,
-            'dateTo' => $dateForm->add(new DateInterval('P2D'))->format('Y-m-d'),
+            'dateFrom' => $this->from->format('Y-m-d'), 'limit' => 1000,
+            'dateTo' => $this->to->format('Y-m-d'),
             'rrdid' => 0
         ]);
         // dd($response->json());
@@ -329,8 +332,8 @@ class SyncWb implements ShouldQueue
             $response = Http::retry(3, 100)->withHeaders([
                 'Authorization' => config('services.wb.statistic_key')
             ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
-                'dateFrom' => $dateForm->format('Y-m-d'),
-                'limit' => 1000, 'dateTo' => $dateForm->add(new DateInterval('P2D'))->format('Y-m-d'),
+                'dateFrom' => $this->from->format('Y-m-d'),
+                'limit' => 1000, 'dateTo' =>$this->to->format('Y-m-d'),
                 'rrdid' => $row['rrd_id']
             ]);
             //dd($response->json());
