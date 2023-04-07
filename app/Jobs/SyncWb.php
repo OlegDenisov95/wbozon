@@ -51,7 +51,7 @@ class SyncWb implements ShouldQueue
     {
         $date = (new DateTime())->format('Y-m-d H:i:s');
         DB::table('wb_prices')->where('date', $date)->delete();
-        $response = Http::withHeaders([
+        $response =  Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.standard_key')
         ])->get('https://suppliers-api.wildberries.ru/public/api/v1/info');
         foreach ($response->json() as $row) {
@@ -81,7 +81,7 @@ class SyncWb implements ShouldQueue
     protected function fetchStocks(DateTime $dateForm)
     {
         $date = (new DateTime())->format('Y-m-d');
-        $response = Http::withHeaders([
+        $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/stocks', ['dateFrom' => $dateForm->format('Y-m-d')]);
         DB::table('wb_stocks')->where('date', $date)->delete();
@@ -119,7 +119,7 @@ class SyncWb implements ShouldQueue
 
     protected function fetchIncomes(DateTime $dateForm)
     {
-        $response = Http::withHeaders([
+        $response =  Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/incomes', ['dateFrom' => $dateForm->format('Y-m-d')]);
         //dd($response->json());
@@ -154,7 +154,7 @@ class SyncWb implements ShouldQueue
 
     protected function fetchOrders(DateTime $dateForm)
     {
-        $response = Http::withHeaders([
+        $response =  Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/orders', ['dateFrom' => $dateForm->format('Y-m-d'), 'flag' => 1]);
         //dd($response->json());
@@ -194,7 +194,7 @@ class SyncWb implements ShouldQueue
     }
     protected function fetchSales(DateTime $dateForm)
     {
-        $response = Http::withHeaders([
+        $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $dateForm->format('Y-m-d')]);
         $dataForSave = [];
@@ -244,7 +244,7 @@ class SyncWb implements ShouldQueue
     }
     protected function fetchSalesReports(DateTime $dateForm)
     {
-        $response = Http::withHeaders([
+        $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
         ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
             'dateFrom' => $dateForm->format('Y-m-d'), 'limit' => 1000,
@@ -326,7 +326,7 @@ class SyncWb implements ShouldQueue
             foreach ($dataForSaveChunks as $chunk) {
                 WbSalesReports::upsert($chunk, ['rrd_id']);
             }
-            $response = Http::withHeaders([
+            $response = Http::retry(3, 100)->withHeaders([
                 'Authorization' => config('services.wb.statistic_key')
             ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod', [
                 'dateFrom' => $dateForm->format('Y-m-d'),

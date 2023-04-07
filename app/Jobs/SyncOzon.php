@@ -46,7 +46,7 @@ class SyncOzon implements ShouldQueue
     protected function fetchOzon()
     {
         $today = (new DateTime())->format('Y-m-d');
-        $response = Http::withHeaders([
+        $response = Http::retry(3, 100)->withHeaders([
             'Host' => 'api-seller.ozon.ru',
             'Client-Id' => config('services.ozon.client_id'),
             'Api-Key' => config('services.ozon.api_key'),
@@ -98,7 +98,7 @@ class SyncOzon implements ShouldQueue
 
 
             }
-            $response = Http::withHeaders([
+            $response = Http::retry(3, 100)->withHeaders([
                 'Host' => 'api-seller.ozon.ru',
                 'Client-Id' => config('services.ozon.client_id'),
                 'Api-Key' => config('services.ozon.api_key'),
@@ -119,7 +119,7 @@ class SyncOzon implements ShouldQueue
     protected function fetchOzonPosting()
     {
         $offset = 0;
-        $response = Http::withHeaders([
+        $response = Http::retry(3, 100)->withHeaders([
             'Host' => 'api-seller.ozon.ru',
             'Client-Id' => config('services.ozon.client_id'),
             'Api-Key' => config('services.ozon.api_key'),
@@ -247,7 +247,7 @@ class SyncOzon implements ShouldQueue
                 OzPostingFbs::upsert($chunk, ['order_id', 'posting_number', 'sku']);
             }
             $offset += 100;
-            $response = Http::withHeaders([
+            $response = Http::retry(3, 100)->withHeaders([
                 'Host' => 'api-seller.ozon.ru',
                 'Client-Id' => config('services.ozon.client_id'),
                 'Api-Key' => config('services.ozon.api_key'),
@@ -276,36 +276,33 @@ class SyncOzon implements ShouldQueue
     }
 
 
-    // protected function fetchOzonPostingFbo()
+    // protected function fetchOzonPostingFbo(DateTime $dateForm)
     // {
     //     $offset = 0;
-    //     $response = Http::withHeaders([
+    //     $response =  Http::retry(3, 100)->withHeaders([
     //         'Host' => 'api-seller.ozon.ru',
     //         'Client-Id' => config('services.ozon.client_id'),
     //         'Api-Key' => config('services.ozon.api_key'),
     //         'Content-Type' => 'application/json'
-    //     ])->post('https://api-seller.ozon.ru/v2/posting/fbo/list', [
-    //         "dir" => "ASC",
-    //         "filter" => [
-    //             "since" => $dateForm->sub(new DateInterval('P1D'))->format('c'),
-    //             "status" =>  "",
-    //             "to" => $dateForm->add(new DateInterval('P1D'))->format('c'),
-    //         ],
-
-    //         "limit" => 5,
-    //         "offset" => 0,
-    //         "translit" => true,
-    //         "with" => [
-
-    //             "analytics_data" => true,
-    //             "financial_data" => true
-
+    //     ])->post(
+    //         'https://api-seller.ozon.ru/v2/posting/fbo/list',
+    //         [
+    //             "dir" => "ASC",
+    //             "filter" => [
+    //                 "since" => "2023-01-01T00:00:00Z",
+    //                 "to" => "2023-04-06T00:00:00Z",
+    //                 "status" => ""
+    //             ],
+    //             "limit" => 100,
+    //             "offset" => $offset,
+    //             "translit" => true,
+    //             "with" => [
+    //                 "analytics_data" => true,
+    //                 "financial_data" => true
+    //             ]
     //         ]
-
-
-
-    //     ]);
+    //     );
     //     $data = $response->json();
-    //     // dd($data);
+    //     dd($data);
     // }
 }
