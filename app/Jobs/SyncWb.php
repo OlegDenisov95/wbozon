@@ -199,7 +199,7 @@ class SyncWb implements ShouldQueue
     {
         $response = Http::retry(3, 100)->withHeaders([
             'Authorization' => config('services.wb.statistic_key')
-        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $this->from->format('Y-m-d')]);
+        ])->get('https://statistics-api.wildberries.ru/api/v1/supplier/sales', ['dateFrom' => $this->from->format('Y-m-d'), 'flag' => 1]);
         $dataForSave = [];
         foreach ($response->json() as $row) {
             $dataForSave[] = [

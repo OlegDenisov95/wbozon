@@ -13,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
@@ -39,9 +40,9 @@ class SyncOzon implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->fetchOzon();
-        $this->fetchOzonPosting();
-        // $this->fetchOzonPostingFbo();
+       $this->fetchOzon();
+         $this->fetchOzonPosting();
+      //   $this->fetchOzonPostingFbo();
     }
     protected function fetchOzon()
     {
@@ -274,7 +275,63 @@ class SyncOzon implements ShouldQueue
             $rows = $data['result']['postings'];
         } while ((!empty($rows)));
     }
+    protected function fetchOzonPostingFbo()
+    {
+        $offset = 0;
+        $response = Http::retry(3, 100)->withHeaders([
+            'Host' => 'api-seller.ozon.ru',
+            'Client-Id' => config('services.ozon.client_id'),
+            'Api-Key' => config('services.ozon.api_key'),
+            'Content-Type' => 'application/json'
+        ])->post('https://api-seller.ozon.ru/v2/posting/fbo/list', [
 
+
+                "dir"=> "ASC",
+                "filter"=>
+
+            [
+
+                "since"=> "2021-09-01T00:00:00.000Z",
+                "status"=> "",
+                "to"=> "2022-11-17T10:44:12.828Z"
+
+            ],
+            "limit"=> 5,
+            "offset"=> 0,
+            "translit"=> true,
+            "with"=>
+
+                [
+                    "analytics_data"=> true,
+                    "financial_data"=> true
+                ]
+
+
+            // "dir" => "ASC",
+            // "filter" => [
+            //     "since" => $this->from->format("Y-m-d\TH:i:s\Z"),
+            //     "status" =>  "",
+            //     "to" => (new DateTime('now'))->format("Y-m-d\TH:i:s\Z"),
+            // ],
+
+            // "limit" => 100,
+            // "offset" => 0,
+            // "translit" => true,
+            // "with" => [
+
+            //     "analytics_data" => true,
+            //     "financial_data" => true
+
+
+
+
+
+        ]);
+        $data = $response->json();
+        dd($data);
+        $rows = $data['result']['postings'];
+
+    }
 
     // protected function fetchOzonPostingFbo(DateTime $dateForm)
     // {
